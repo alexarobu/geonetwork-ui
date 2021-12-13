@@ -1,7 +1,9 @@
-<div class="mb-4 grid grid-cols-3 gap-6">
+<drag-scroll [scrollbar-hidden]="true" class="select-none">
   <gn-ui-link-card
+    drag-scroll-item
     *ngFor="let link of facade.otherLinks$ | async"
     [link]="link"
+    class="flex-shrink-0 mr-4 my-2"
   >
   </gn-ui-link-card>
-</div>
+</drag-scroll>

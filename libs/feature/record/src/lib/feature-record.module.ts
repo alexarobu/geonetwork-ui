@@ -21,6 +21,7 @@ import { UiWidgetsModule } from '@geonetwork-ui/ui/widgets'
 import { TranslateModule } from '@ngx-translate/core'
 import { DataOtherlinksComponent } from './data-otherlinks/data-otherlinks.component'
 import { RelatedRecordsComponent } from './related-records/related-records.component'
+import { DragScrollModule } from 'ngx-drag-scroll'
 
 @NgModule({
   declarations: [
@@ -45,6 +46,7 @@ import { RelatedRecordsComponent } from './related-records/related-records.compo
     MatIconModule,
     UiWidgetsModule,
     TranslateModule,
+    DragScrollModule,
   ],
   providers: [MdViewFacade],
   exports: [
