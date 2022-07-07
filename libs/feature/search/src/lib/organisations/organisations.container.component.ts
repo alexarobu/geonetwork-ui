@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core'
+import { GroupsApiService } from '@geonetwork-ui/data-access/gn4'
 import { Organisation } from '@geonetwork-ui/util/shared'
-import { Observable } from 'rxjs'
-import { filter, map } from 'rxjs/operators'
+import { combineLatest, Observable } from 'rxjs'
+import { filter, map, tap } from 'rxjs/operators'
 import { SearchFacade } from '../state/search.facade'
 
 @Component({
@@ -11,7 +12,12 @@ import { SearchFacade } from '../state/search.facade'
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrganisationsContainerComponent implements OnInit {
-  constructor(private searchfacade: SearchFacade) {}
+  constructor(
+    private searchfacade: SearchFacade,
+    private groupsApiService: GroupsApiService
+  ) {}
+  orgAggregation$: Observable<any>
+  groups$: Observable<any[]>
   organisations$: Observable<Organisation[]>
 
   ngOnInit(): void {
@@ -28,16 +34,25 @@ export class OrganisationsContainerComponent implements OnInit {
       },
     })
     this.searchfacade.requestMoreResults()
-    this.organisations$ = this.searchfacade.resultsAggregations$.pipe(
-      filter((aggs) => aggs.org),
-      map((aggs) =>
+    this.groups$ = this.groupsApiService.getGroups()
+    // .pipe(tap(console.log))
+    this.orgAggregation$ = this.searchfacade.resultsAggregations$.pipe(
+      filter((aggs) => aggs.org)
+    )
+    this.organisations$ = combineLatest([
+      this.orgAggregation$,
+      this.groups$,
+    ]).pipe(
+      map(([aggs, groups]) =>
         aggs.org.buckets
           .map(
             (organisation) =>
               ({
                 name: organisation.key,
                 description: null,
-                logoUrl: null,
+                logoUrl: groups.find(
+                  (group) => group.name === organisation.name
+                )?.logo,
                 recordCount: organisation.doc_count,
               } as Organisation)
           )
@@ -50,6 +65,7 @@ export class OrganisationsContainerComponent implements OnInit {
               ) === i
           )
       )
+      // tap(console.log)
     )
   }
 }
