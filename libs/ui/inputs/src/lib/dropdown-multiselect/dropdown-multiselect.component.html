@@ -1,9 +1,4 @@
-<div
-  [attr.aria-owns]="'todo'"
-  (click)="panelOpen = true"
-  cdkOverlayOrigin
-  #overlayOrigin="cdkOverlayOrigin"
->
+<div [attr.aria-owns]="'todo'" (click)="panelOpen = true" cdkOverlayOrigin #overlayOrigin="cdkOverlayOrigin">
   <span class="">{{ title }}</span>
   <div>
     <!-- Use an inline SVG, because it works better than a CSS triangle in high contrast mode. -->
@@ -13,38 +8,23 @@
   </div>
 </div>
 
-<ng-template
-  cdkConnectedOverlay
-  cdkConnectedOverlayLockPosition
-  cdkConnectedOverlayHasBackdrop
-  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop"
-  [cdkConnectedOverlayOrigin]="overlayOrigin"
-  [cdkConnectedOverlayOpen]="panelOpen"
-  [cdkConnectedOverlayPositions]="overlayPositions"
-  [cdkConnectedOverlayWidth]="'400px'"
-  (backdropClick)="panelOpen = false"
-  (attach)="attach()"
-  (detach)="detach()"
->
-  <div
-    #panel
-    class="border border-black p-3"
-    role="listbox"
-    tabindex="-1"
-    [attr.id]="'todo'"
-    [attr.aria-multiselectable]="true"
-    [attr.aria-label]="'todo'"
-    [attr.aria-labelledby]="'todo'"
-    (keydown)="handleKeyDown($event)"
-  >
+<!-- <ng-template cdkConnectedOverlay cdkConnectedOverlayLockPosition cdkConnectedOverlayHasBackdrop
+  cdkConnectedOverlayBackdropClass="cdk-overlay-transparent-backdrop" [cdkConnectedOverlayOrigin]="overlayOrigin"
+  [cdkConnectedOverlayOpen]="panelOpen" [cdkConnectedOverlayPositions]="overlayPositions"
+  [cdkConnectedOverlayWidth]="'400px'" (backdropClick)="panelOpen = false" (attach)="attach()" (detach)="detach()">
+  <div #panel class="border border-black p-3" role="listbox" tabindex="-1" [attr.id]="'todo'"
+    [attr.aria-multiselectable]="true" [attr.aria-label]="'todo'" [attr.aria-labelledby]="'todo'"
+    (keydown)="handleKeyDown($event)">
     <div *ngFor="let choice of choices">
-      <mat-checkbox
-        [aria-label]="'todo'"
-        [checked]="isSelected(choice)"
-        (change)="select(choice, $event)"
-      >
+      <mat-checkbox [aria-label]="'todo'" [checked]="isSelected(choice)" (change)="select(choice, $event)">
         {{ choice.label }}
       </mat-checkbox>
     </div>
   </div>
-</ng-template>
+</ng-template> -->
+
+<ng-select [multiple]="true" [isOpen]="true" class="ng-select-opened" [items]="choices">
+  <ng-template ng-option-tmp let-item="item" let-item$="item$" let-index="index">
+    <input id="item-{{index}}" type="checkbox" [ngModel]="item$.selected" /> {{item.label}}
+  </ng-template>
+</ng-select>

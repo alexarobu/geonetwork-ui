@@ -6,13 +6,7 @@ import {
   OnInit,
   Output,
 } from '@angular/core'
-import {
-  // CdkConnectedOverlay,
-  // CdkOverlayOrigin,
-  ConnectedPosition,
-  // Overlay,
-  // ScrollStrategy,
-} from '@angular/cdk/overlay'
+import { ConnectedPosition } from '@angular/cdk/overlay'
 
 interface Choice {
   value: unknown
@@ -22,7 +16,7 @@ interface Choice {
 @Component({
   selector: 'gn-ui-dropdown-multiselect',
   templateUrl: './dropdown-multiselect.component.html',
-  styleUrls: ['./dropdown-multiselect.component.css'],
+  styleUrls: ['./dropdown-multiselect.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DropdownMultiselectComponent {
@@ -44,9 +38,9 @@ export class DropdownMultiselectComponent {
 
   panelOpen = true
 
-  attach() {}
-  detach() {}
-  handleKeyDown() {}
+  attach() { }
+  detach() { }
+  handleKeyDown() { }
 
   isSelected(choice: Choice) {
     return this.selected.indexOf(choice.value) > -1
