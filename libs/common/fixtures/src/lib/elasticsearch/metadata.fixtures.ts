@@ -1,4 +1,4 @@
-import { Gn4SearchResults } from '@geonetwork-ui/common/domain/metadata/gn4/metadata.model'
+import { Gn4SearchResults } from '@geonetwork-ui/common/domain/record/gn4/metadata.model'
 import { deepFreeze } from '../utils/freeze'
 
 export const hitsOnly = (): Gn4SearchResults =>

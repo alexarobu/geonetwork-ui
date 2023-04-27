@@ -1,4 +1,4 @@
-import { Link } from '@geonetwork-ui/common/domain/metadata/gn4/metadata.model'
+import { Link } from '@geonetwork-ui/common/domain/record/gn4/metadata.model'
 
 export const LINK_FIXTURES = (): Record<string, Link> => ({
   readmeLink: {

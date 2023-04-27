@@ -1,5 +1,5 @@
 import { HttpClientModule } from '@angular/common/http'
-import { CHART_TYPE_VALUES } from '@geonetwork-ui/common/domain/data/dataviz-configuration.model'
+import { CHART_TYPE_VALUES } from '@geonetwork-ui/common/domain/dataviz-configuration.model'
 import { TranslateModule } from '@ngx-translate/core'
 import {
   moduleMetadata,

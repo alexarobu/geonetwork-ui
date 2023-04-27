@@ -2,11 +2,11 @@ import {
   DatasetRecord,
   RecordStatus,
   Role,
-} from '@geonetwork-ui/common/domain/metadata'
+} from '@geonetwork-ui/common/domain/record'
 import {
   ES_FIXTURE_FULL_RESPONSE,
   hitsOnly,
-} from '@geonetwork-ui/common/domain/metadata/gn4/metadata.fixtures'
+} from '@geonetwork-ui/common/domain/record/gn4/metadata.fixtures'
 import { Gn4MetadataMapper } from './gn4.metadata.mapper'
 
 describe('MetadataElasticsearchMapper', () => {

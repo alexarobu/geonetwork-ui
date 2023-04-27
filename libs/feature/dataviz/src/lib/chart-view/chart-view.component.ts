@@ -12,8 +12,6 @@ import {
 } from '@geonetwork-ui/data-fetcher'
 import { DDChoices } from '@geonetwork-ui/ui/inputs'
 import { MetadataLink } from '@geonetwork-ui/util/shared'
-import { AggregationTypes } from '@geonetwork-ui/common/domain/data/data-api.model'
-import { InputChartType } from '@geonetwork-ui/common/domain/data/dataviz-configuration.model'
 import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs'
 import {
   catchError,
@@ -26,6 +24,10 @@ import {
   tap,
 } from 'rxjs/operators'
 import { DataService } from '../service/data.service'
+import {
+  AggregationTypes,
+  InputChartType,
+} from '@geonetwork-ui/common/domain/dataviz-configuration.model'
 
 marker('chart.type.bar')
 marker('chart.type.barHorizontal')

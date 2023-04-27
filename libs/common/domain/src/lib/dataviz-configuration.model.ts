@@ -1,4 +1,4 @@
-import { AggregationTypes } from './data-api.model'
+export type AggregationTypes = 'count' | 'sum' | 'min' | 'max' | 'average'
 
 export const CHART_TYPE_VALUES = [
   'bar',

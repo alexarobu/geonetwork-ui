@@ -7,7 +7,7 @@ import {
 import {
   CatalogRecord,
   RecordStatus,
-} from '@geonetwork-ui/common/domain/metadata'
+} from '@geonetwork-ui/common/domain/record'
 import { readFirst } from '@nrwl/angular/testing'
 
 const SAMPLE_RECORD: CatalogRecord = {

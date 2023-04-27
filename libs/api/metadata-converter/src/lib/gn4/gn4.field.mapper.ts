@@ -1,7 +1,7 @@
 import {
   AccessConstraintType,
   DatasetRecord,
-} from '@geonetwork-ui/common/domain/metadata'
+} from '@geonetwork-ui/common/domain/record'
 import { getStatusFromStatusCode } from '../iso19139/codelists/status.mapper'
 import { getUpdateFrequencyFromFrequencyCode } from '../iso19139/codelists/update-frequency.mapper'
 import {

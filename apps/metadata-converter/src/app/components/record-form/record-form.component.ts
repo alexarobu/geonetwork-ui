@@ -16,7 +16,7 @@ import {
   ServiceOnlineResource,
   ServiceOnlineResourceType,
   ServiceRecord,
-} from '@geonetwork-ui/common/domain/metadata'
+} from '@geonetwork-ui/common/domain/record'
 
 @Component({
   selector: 'gn-ui-record-form',

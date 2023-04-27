@@ -6,7 +6,7 @@ import {
 } from '@angular/router'
 import { Observable } from 'rxjs'
 import { EditorService } from '@geonetwork-ui/feature/editor'
-import { CatalogRecord } from '@geonetwork-ui/common/domain/metadata'
+import { CatalogRecord } from '@geonetwork-ui/common/domain/record'
 
 @Injectable({
   providedIn: 'root',

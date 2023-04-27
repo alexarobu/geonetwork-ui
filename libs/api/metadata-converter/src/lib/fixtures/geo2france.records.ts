@@ -2,7 +2,7 @@ import {
   DatasetRecord,
   RecordStatus,
   Role,
-} from '@geonetwork-ui/common/domain/metadata'
+} from '@geonetwork-ui/common/domain/record'
 
 export const GEO2FRANCE_PLU_DATASET_RECORD: DatasetRecord = {
   uniqueIdentifier: '7d002c4c-92ef-4b9f-a568-d732f740b99e',

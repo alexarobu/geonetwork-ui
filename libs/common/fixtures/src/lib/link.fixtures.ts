@@ -1,5 +1,5 @@
 import { deepFreeze } from './utils/freeze'
-import { MetadataLinkType } from '@geonetwork-ui/common/domain/metadata/gn4/search.model'
+import { MetadataLinkType } from '@geonetwork-ui/common/domain/record/gn4/search.model'
 
 export const LINK_FIXTURES = deepFreeze({
   readmeLink: {

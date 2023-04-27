@@ -1,6 +1,6 @@
 import { getLinkType } from './atomic-operations'
-import { LINK_FIXTURES } from '@geonetwork-ui/common/domain/metadata/gn4/metadata-links.fixtures'
-import { Link } from '@geonetwork-ui/common/domain/metadata'
+import { LINK_FIXTURES } from '@geonetwork-ui/common/domain/record/gn4/metadata-links.fixtures'
+import { Link } from '@geonetwork-ui/common/domain/record'
 
 let links: Record<string, Link>
 describe('atomic operations', () => {

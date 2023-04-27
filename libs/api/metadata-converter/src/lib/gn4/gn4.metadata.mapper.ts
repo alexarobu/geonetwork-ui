@@ -1,7 +1,7 @@
 import {
   DatasetRecord,
   Gn4SearchResults,
-} from '@geonetwork-ui/common/domain/metadata'
+} from '@geonetwork-ui/common/domain/record'
 import { MetadataBaseMapper } from '../metadata-base.mapper'
 import { Gn4FieldMapper } from './gn4.field.mapper'
 

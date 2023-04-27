@@ -1,6 +1,6 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core'
 import { toModel, toXml } from '@geonetwork-ui/metadata-converter'
-import { CatalogRecord } from '@geonetwork-ui/common/domain/metadata'
+import { CatalogRecord } from '@geonetwork-ui/common/domain/record'
 
 @Component({
   selector: 'gn-ui-status',

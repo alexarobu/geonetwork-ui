@@ -16,7 +16,7 @@ import {
   UpdateFrequency,
   UpdateFrequencyCustom,
   ServiceOnlineResource,
-} from '@geonetwork-ui/common/domain/metadata'
+} from '@geonetwork-ui/common/domain/record'
 import { getStatusFromStatusCode } from './codelists/status.mapper'
 import { getUpdateFrequencyFromFrequencyCode } from './codelists/update-frequency.mapper'
 import {

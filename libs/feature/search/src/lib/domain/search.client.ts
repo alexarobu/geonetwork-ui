@@ -1,4 +1,4 @@
-import { CatalogRecord } from '@geonetwork-ui/common/domain/metadata'
+import { CatalogRecord } from '@geonetwork-ui/common/domain/record'
 import { Observable } from 'rxjs'
 import { Aggregation, AggregationParams } from './aggregation.model'
 import { SearchOptions } from './search.model'

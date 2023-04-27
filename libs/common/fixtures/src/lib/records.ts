@@ -2,7 +2,7 @@ import { deepFreeze } from './utils/freeze'
 import {
   MetadataLinkType,
   MetadataRecord,
-} from '@geonetwork-ui/common/domain/metadata/gn4/search.model'
+} from '@geonetwork-ui/common/domain/record/gn4/search.model'
 
 export const RECORDS_SUMMARY_FIXTURE: MetadataRecord[] = deepFreeze([
   {

@@ -2,7 +2,7 @@ import {
   DatasetRecord,
   RecordStatus,
   Role,
-} from '@geonetwork-ui/common/domain/metadata'
+} from '@geonetwork-ui/common/domain/record'
 
 export const GENERIC_DATASET_RECORD: DatasetRecord = {
   uniqueIdentifier: 'my-dataset-001',
