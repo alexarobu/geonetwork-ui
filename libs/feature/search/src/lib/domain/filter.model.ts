@@ -1,5 +1,5 @@
 import { Geometry } from 'geojson'
-import { FieldName } from './search.client'
+import { FieldName } from './search.model'
 
 type NumericComparisonOperator = '<' | '>' | '<=' | '>=' | '=' | '!='
 type ComparisonOperator = NumericComparisonOperator
