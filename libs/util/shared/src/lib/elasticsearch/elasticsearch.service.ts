@@ -251,6 +251,7 @@ export class ElasticsearchService {
   }
 
   private buildPayloadFilter({ custom, elastic }: StateConfigFilters) {
+    console.log('hello')
     const query = []
     if (elastic) {
       if (!Array.isArray(elastic)) {

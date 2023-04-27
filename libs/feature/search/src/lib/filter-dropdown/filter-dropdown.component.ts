@@ -23,6 +23,7 @@ export class FilterDropdownComponent implements OnInit {
   @Input() title: string
 
   choices$: Observable<Choice[]>
+
   selected$ = this.searchFacade.searchFilters$.pipe(
     map((filters) =>
       this.fieldsService.getValuesForFilters(this.fieldName, filters)
