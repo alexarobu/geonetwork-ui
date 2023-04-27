@@ -25,11 +25,9 @@ import {
   getGlobalConfig,
   getOptionalSearchConfig,
   getThemeConfig,
+  TRANSLATE_WITH_OVERRIDES_CONFIG,
 } from '@geonetwork-ui/util/app-config'
-import {
-  TRANSLATE_DEFAULT_CONFIG,
-  UtilI18nModule,
-} from '@geonetwork-ui/util/i18n'
+import { UtilI18nModule } from '@geonetwork-ui/util/i18n'
 import {
   METADATA_LANGUAGE,
   PROXY_PATH,
@@ -102,7 +100,7 @@ export const metaReducers: MetaReducer[] = !environment.production ? [] : []
     !environment.production ? StoreDevtoolsModule.instrument() : [],
     EffectsModule.forRoot(),
     UtilI18nModule,
-    TranslateModule.forRoot(TRANSLATE_DEFAULT_CONFIG),
+    TranslateModule.forRoot(TRANSLATE_WITH_OVERRIDES_CONFIG),
     FeatureSearchModule,
     DefaultRouterModule.forRoot({
       searchStateId: 'mainSearch',

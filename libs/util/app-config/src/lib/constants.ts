@@ -1,3 +1,8 @@
+import { TranslateCompiler, TranslateLoader } from '@ngx-translate/core'
+import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler'
+import { HttpClient } from '@angular/common/http'
+import { DEFAULT_LANG, HttpLoaderFactory } from '@geonetwork-ui/util/i18n'
+
 export const LANGUAGE_CODES_ISO_3 = [
   'aar',
   'abk',
