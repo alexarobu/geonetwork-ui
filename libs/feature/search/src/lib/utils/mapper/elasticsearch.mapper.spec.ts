@@ -4,7 +4,7 @@ import { MetadataLinkType, MetadataRecord } from '@geonetwork-ui/util/shared'
 import {
   ES_FIXTURE_FULL_RESPONSE,
   hitsOnly,
-} from '@geonetwork-ui/util/shared/fixtures'
+} from '@geonetwork-ui/common/fixtures'
 import { MetadataUrlService } from '../service/metadata-url.service'
 
 const metadataUrlServiceMock = {

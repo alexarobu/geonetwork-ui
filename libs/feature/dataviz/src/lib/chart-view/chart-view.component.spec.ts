@@ -17,7 +17,7 @@ import { TranslateModule } from '@ngx-translate/core'
 import { DataService } from '../service/data.service'
 import { of, throwError } from 'rxjs'
 import { By } from '@angular/platform-browser'
-import { LINK_FIXTURES } from '@geonetwork-ui/util/shared/fixtures'
+import { LINK_FIXTURES } from '@geonetwork-ui/common/fixtures'
 import { DropdownSelectorComponent } from '@geonetwork-ui/ui/inputs'
 
 @Component({

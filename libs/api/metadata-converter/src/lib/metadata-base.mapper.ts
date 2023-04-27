@@ -1,4 +1,4 @@
-import { DatasetRecord } from '@geonetwork-ui/util/types/metadata'
+import { DatasetRecord } from '@geonetwork-ui/common/domain/metadata'
 
 export class MetadataMapperContext {
   readonly location?

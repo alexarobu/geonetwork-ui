@@ -5,7 +5,7 @@ import {
   ElasticsearchService,
   MetadataRecord,
 } from '@geonetwork-ui/util/shared'
-import { simpleWithAgg } from '@geonetwork-ui/util/shared/fixtures'
+import { simpleWithAgg } from '@geonetwork-ui/common/fixtures'
 
 import { provideMockActions } from '@ngrx/effects/testing'
 import { provideMockStore } from '@ngrx/store/testing'

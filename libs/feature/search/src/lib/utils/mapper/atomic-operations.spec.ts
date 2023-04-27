@@ -1,4 +1,4 @@
-import { LINK_FIXTURES } from '@geonetwork-ui/util/shared/fixtures'
+import { LINK_FIXTURES } from '@geonetwork-ui/common/fixtures'
 import { getLinkType } from './atomic-operations'
 
 describe('atomic operations', () => {

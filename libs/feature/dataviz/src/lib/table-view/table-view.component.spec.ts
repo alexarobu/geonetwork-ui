@@ -19,7 +19,7 @@ import {
 import { TranslateModule } from '@ngx-translate/core'
 import { By } from '@angular/platform-browser'
 import { DataService } from '../service/data.service'
-import { LINK_FIXTURES } from '@geonetwork-ui/util/shared/fixtures'
+import { LINK_FIXTURES } from '@geonetwork-ui/common/fixtures'
 
 const SAMPLE_DATA_ITEMS = [
   { type: 'Feature', properties: { id: 1 } },

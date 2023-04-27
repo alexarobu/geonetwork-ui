@@ -40,7 +40,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing'
 import {
   ES_FIXTURE_AGGS_REQUEST,
   simpleWithAgg,
-} from '@geonetwork-ui/util/shared/fixtures'
+} from '@geonetwork-ui/common/fixtures'
 import { HttpErrorResponse } from '@angular/common/http'
 import { delay } from 'rxjs/operators'
 import { FavoritesService } from '../favorites/favorites.service'

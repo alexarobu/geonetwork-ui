@@ -2,7 +2,7 @@ import {
   ES_FIXTURE_AGGS_REQUEST,
   ES_FIXTURE_AGGS_RESPONSE,
   ES_FIXTURE_AGGS_RESPONSE_MORE,
-} from '@geonetwork-ui/util/shared/fixtures'
+} from '@geonetwork-ui/common/fixtures'
 import * as fromActions from './actions'
 import { DEFAULT_SEARCH_KEY } from './actions'
 import {

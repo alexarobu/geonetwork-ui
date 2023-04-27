@@ -12,8 +12,8 @@ import {
 } from '@geonetwork-ui/data-fetcher'
 import { DDChoices } from '@geonetwork-ui/ui/inputs'
 import { MetadataLink } from '@geonetwork-ui/util/shared'
-import { AggregationTypes } from '@geonetwork-ui/util/types/data/data-api.model'
-import { InputChartType } from '@geonetwork-ui/util/types/data/dataviz-configuration.model'
+import { AggregationTypes } from '@geonetwork-ui/common/domain/data/data-api.model'
+import { InputChartType } from '@geonetwork-ui/common/domain/data/dataviz-configuration.model'
 import { BehaviorSubject, combineLatest, EMPTY, Observable } from 'rxjs'
 import {
   catchError,

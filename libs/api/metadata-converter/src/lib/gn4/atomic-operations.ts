@@ -7,7 +7,7 @@ import {
   OnlineLinkResource,
   Organization,
   Role,
-} from '@geonetwork-ui/util/types/metadata'
+} from '@geonetwork-ui/common/domain/metadata'
 import { matchProtocol } from '../common/distribution.mapper'
 import { getRoleFromRoleCode } from '../iso19139/codelists/role.mapper'
 
