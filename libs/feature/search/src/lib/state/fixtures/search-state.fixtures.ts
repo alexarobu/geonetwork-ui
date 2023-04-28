@@ -9,7 +9,6 @@ export const SEARCH_STATE_FILTERS_FIXTURE = {
       dataset: true,
     },
   },
-
   simpleTerms: {
     'tag.default': {
       'land use': true,

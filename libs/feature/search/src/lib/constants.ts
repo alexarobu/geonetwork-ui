@@ -1,4 +1,8 @@
-export const ES_SOURCE_SUMMARY = [
+import { FieldName } from '@geonetwork-ui/common/domain/search'
+
+export const DEFAULT_PAGE_SIZE = 10
+
+export const FIELDS_SUMMARY: FieldName[] = [
   'uuid',
   'id',
   'title',
@@ -14,14 +18,14 @@ export const ES_SOURCE_SUMMARY = [
   'userSavedCount',
 ]
 
-export const ES_SOURCE_BRIEF = [
-  ...ES_SOURCE_SUMMARY,
+export const FIELDS_BRIEF: FieldName[] = [
+  ...FIELDS_SUMMARY,
   'resourceTypeObject',
   'Org',
   'OrgForResource',
 ]
 
-export const ES_QUERY_STRING_FIELDS = [
+export const QUERY_FIELDS: FieldName[] = [
   'resourceTitleObject.${searchLang}^5',
   'tag.${searchLang}^4',
   'resourceAbstractObject.${searchLang}^3',

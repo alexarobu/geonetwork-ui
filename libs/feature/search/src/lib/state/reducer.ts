@@ -1,21 +1,18 @@
-import {
-  RequestFields,
-  MetadataRecord,
-  RESULTS_PAGE_SIZE,
-  SearchFilters,
-  StateConfigFilters,
-} from '@geonetwork-ui/util/shared'
 import * as fromActions from './actions'
 import { DEFAULT_SEARCH_KEY } from './actions'
-import { ES_SOURCE_SUMMARY } from '@geonetwork-ui/util/shared'
+import {
+  Aggregation,
+  AggregationParams,
+  FieldFilter,
+  FieldName,
+  SearchParams,
+} from '@geonetwork-ui/common/domain/search'
+import { DEFAULT_PAGE_SIZE, FIELDS_SUMMARY } from '../constants'
+import { CatalogRecord } from '@geonetwork-ui/common/domain/record'
 
 export const SEARCH_FEATURE_KEY = 'searchState'
 
-export interface SearchStateParams {
-  filters?: SearchFilters
-  sortBy?: string
-  size?: number
-  from?: number
+export type SearchStateParams = SearchParams & {
   favoritesOnly?: boolean
   useSpatialFilter?: boolean
 }
@@ -27,18 +24,15 @@ export type SearchError = {
 
 export interface SearchStateSearch {
   config: {
-    aggregations?: any
-    filters?: StateConfigFilters
-    source?: RequestFields
+    aggregations?: AggregationParams[]
+    filters?: FieldFilter
+    source?: FieldName[]
   }
   params: SearchStateParams
   results: {
-    hits: {
-      value: number
-      eq?: string
-    }
-    records: MetadataRecord[]
-    aggregations: any
+    count: number
+    records: CatalogRecord[]
+    aggregations: Aggregation[]
   }
   resultsLayout?: string
   loadingMore: boolean
@@ -50,20 +44,18 @@ export type SearchState = { [key: string]: SearchStateSearch }
 export const initSearch = (): SearchStateSearch => {
   return {
     config: {
-      filters: {},
-      source: { includes: ES_SOURCE_SUMMARY },
+      source: FIELDS_SUMMARY,
     },
     params: {
-      filters: {},
-      size: RESULTS_PAGE_SIZE,
-      from: 0,
+      limit: DEFAULT_PAGE_SIZE,
+      offset: 0,
       favoritesOnly: false,
       useSpatialFilter: true,
     },
     results: {
-      hits: null,
+      count: 0,
       records: [],
-      aggregations: {},
+      aggregations: [],
     },
     loadingMore: false,
     error: null,
@@ -142,7 +134,7 @@ export function reducerSearch(
         ...state,
         params: {
           ...state.params,
-          sortBy: action.sortBy,
+          sort: action.sortBy,
         },
       }
     }
@@ -156,13 +148,13 @@ export function reducerSearch(
       }
     }
     case fromActions.SET_PAGINATION: {
-      const { from, size } = action
+      const { offset, limit } = action
       return {
         ...state,
         params: {
           ...state.params,
-          from,
-          size,
+          limit,
+          offset,
         },
       }
     }
@@ -171,13 +163,13 @@ export function reducerSearch(
         ...state,
         params: {
           ...state.params,
-          from: 0,
+          offset: 0,
         },
       }
     case fromActions.SCROLL:
     case fromActions.PAGINATE: {
-      const delta = (action as fromActions.Paginate).delta || state.params.size
-      const from = Math.max(0, state.params.from + delta)
+      const delta = (action as fromActions.Paginate).delta || state.params.limit
+      const from = Math.max(0, state.params.offset + delta)
       return {
         ...state,
         params: {

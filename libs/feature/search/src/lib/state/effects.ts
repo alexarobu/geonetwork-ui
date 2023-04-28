@@ -131,9 +131,9 @@ export class SearchEffects {
                 JSON.stringify(
                   this.esService.getSearchRequestBody(
                     state.config.aggregations,
-                    state.params.size,
-                    state.params.from,
-                    state.params.sortBy,
+                    state.params.limit,
+                    state.params.offset,
+                    state.params.sort,
                     state.config.source,
                     state.params.filters,
                     state.config.filters,

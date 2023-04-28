@@ -4,9 +4,9 @@ export type FieldSort = ['desc' | 'asc', FieldName]
 export type FieldName = string
 
 export interface SearchParams {
-  filters: FieldFilter
+  filters?: FieldFilter
   offset: number
   limit: number
-  sort: FieldSort
-  fields: FieldName[]
+  sort?: FieldSort
+  fields?: FieldName[]
 }
