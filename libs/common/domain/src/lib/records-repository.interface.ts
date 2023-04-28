@@ -1,8 +1,12 @@
 import { Observable } from 'rxjs'
-import { CatalogRecord } from './record'
-import { Aggregation, AggregationParams, SearchParams } from './search'
+import {
+  Aggregations,
+  AggregationsParams,
+  SearchParams,
+  SearchResults,
+} from './search'
 
 export abstract class RecordsRepositoryInterface {
-  abstract search(params: SearchParams): Observable<CatalogRecord[]>
-  abstract aggregate(params: AggregationParams): Observable<Aggregation>
+  abstract search(params: SearchParams): Observable<SearchResults>
+  abstract aggregate(params: AggregationsParams): Observable<Aggregations>
 }

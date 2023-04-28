@@ -1,12 +1,19 @@
-import { FieldFilter } from './filter.model'
+import { FieldFilters } from './filter.model'
+import { CatalogRecord } from '../record'
 
-export type FieldSort = ['desc' | 'asc', FieldName]
+type FieldSort = ['desc' | 'asc', FieldName]
+export type SortByField = FieldSort | FieldSort[] // several sort criteria can be used!
 export type FieldName = string
 
 export interface SearchParams {
-  filters?: FieldFilter
+  filters?: FieldFilters
   offset: number
   limit: number
-  sort?: FieldSort
+  sort?: SortByField
   fields?: FieldName[]
+}
+
+export interface SearchResults {
+  records: CatalogRecord[]
+  count: number
 }

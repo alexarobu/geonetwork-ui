@@ -17,6 +17,7 @@ export type AggregationParams =
       type: 'filters'
       filters: { name: string; filter: FieldFilter }[]
     }
+export type AggregationsParams = Record<FieldName, AggregationParams>
 
 interface TermBucket {
   term: string
@@ -39,3 +40,4 @@ export type AggregationSort = ['desc' | 'asc', 'key' | 'count']
 export interface Aggregation {
   buckets: Bucket[]
 }
+export type Aggregations = Record<FieldName, Aggregation>

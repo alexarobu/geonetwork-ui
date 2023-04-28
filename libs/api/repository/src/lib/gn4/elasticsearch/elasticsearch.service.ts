@@ -8,6 +8,7 @@ import {
   StateConfigFilters,
 } from '../models'
 import { ES_QUERY_STRING_FIELDS, ES_SOURCE_SUMMARY } from './constant'
+import { SortByField } from '@geonetwork-ui/common/domain/search'
 
 export const METADATA_LANGUAGE = new InjectionToken<string>('metadata-language')
 
@@ -27,7 +28,7 @@ export class ElasticsearchService {
     aggregations: any = {},
     size: number = 0,
     from: number = 0,
-    sortBy: string = '',
+    sortBy: SortByField = null,
     requestFields: RequestFields = [],
     searchFilters: SearchFilters = {},
     configFilters: StateConfigFilters = {},
@@ -147,16 +148,10 @@ export class ElasticsearchService {
     }
   }
 
-  private buildPayloadSort(sortBy: string): SortParams {
-    return sortBy
-      ? sortBy.split(',').map((s) => {
-          if (s.startsWith('-')) {
-            return { [s.substring(1)]: 'desc' }
-          } else {
-            return s
-          }
-        })
-      : undefined
+  private buildPayloadSort(sortBy: SortByField): SortParams {
+    if (sortBy === null) return undefined
+    const fields = Array.isArray(sortBy[0]) ? sortBy : [sortBy]
+    return fields.map((field) => ({ [field[1]]: field[0] }))
   }
 
   private injectLangInQueryStringFields(

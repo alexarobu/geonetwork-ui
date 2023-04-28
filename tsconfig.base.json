@@ -20,6 +20,9 @@
     "noImplicitAny": false,
     "esModuleInterop": true,
     "paths": {
+      "@geonetwork-ui/api/repository/gn4": [
+        "libs/api/repository/src/lib/gn4/index.ts"
+      ],
       "@geonetwork-ui/common/domain/*": ["libs/common/domain/src/lib/*"],
       "@geonetwork-ui/common/fixtures": ["libs/common/fixtures/src/index.ts"],
       "@geonetwork-ui/data-access/datafeeder": [

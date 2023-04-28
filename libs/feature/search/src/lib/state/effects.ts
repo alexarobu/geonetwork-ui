@@ -1,14 +1,9 @@
 import { Inject, Injectable, Optional } from '@angular/core'
-import { SearchApiService } from '@geonetwork-ui/data-access/gn4'
 import { AuthService } from '@geonetwork-ui/feature/auth'
-import { ElasticsearchMapper } from '../utils/mapper'
-import {
-  ElasticsearchService,
-  EsSearchResponse,
-} from '@geonetwork-ui/util/shared'
+import { EsSearchResponse } from '@geonetwork-ui/util/shared'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { select, Store } from '@ngrx/store'
-import { from, of } from 'rxjs'
+import { combineLatestWith, from, of } from 'rxjs'
 import {
   catchError,
   map,
@@ -49,16 +44,15 @@ import { switchMapWithSearchId } from '../utils/operators/search.operator'
 import { FavoritesService } from '../favorites/favorites.service'
 import { Geometry } from 'geojson'
 import { FILTER_GEOMETRY } from '../feature-search.module'
+import { Gn4Repository } from '@geonetwork-ui/api/repository/gn4'
 
 @Injectable()
 export class SearchEffects {
   constructor(
     private actions$: Actions,
-    private searchService: SearchApiService,
     private store$: Store<SearchState>,
+    private recordsRepository: Gn4Repository,
     private authService: AuthService,
-    private esService: ElasticsearchService,
-    private esMapper: ElasticsearchMapper,
     private favoritesService: FavoritesService,
     @Optional()
     @Inject(FILTER_GEOMETRY)
@@ -125,31 +119,30 @@ export class SearchEffects {
               SearchStateSearch,
               string[],
               Geometry | null
-            ]) =>
-              this.searchService.search(
-                'bucket',
-                JSON.stringify(
-                  this.esService.getSearchRequestBody(
-                    state.config.aggregations,
-                    state.params.limit,
-                    state.params.offset,
-                    state.params.sort,
-                    state.config.source,
-                    state.params.filters,
-                    state.config.filters,
-                    state.params.favoritesOnly ? favorites : null,
-                    geometry
-                  )
-                )
+            ]) => {
+              const { offset, limit, sort } = state.params
+              const filters = {
+                ...state.config.filters,
+                ...state.params.filters,
+              }
+              const results$ = this.recordsRepository.search({
+                filters,
+                offset,
+                limit,
+                sort,
+              })
+              const aggregations$ = this.recordsRepository.aggregate(
+                state.config.aggregations
               )
+              // FIXME: favorites, geometry
+              return results$.pipe(combineLatestWith(aggregations$))
+            }
           ),
-          switchMap((response: EsSearchResponse) => {
-            const records = this.esMapper.toRecords(response)
-            const aggregations = response.aggregations
+          switchMap(([results, aggregations]) => {
             return [
-              new AddResults(records, action.id),
+              new AddResults(results.records, action.id),
               new SetResultsAggregations(aggregations, action.id),
-              new SetResultsHits(response.hits.total, action.id),
+              new SetResultsHits(results.count, action.id),
               new ClearError(action.id),
             ]
           }),
@@ -171,7 +164,7 @@ export class SearchEffects {
       switchMap((action: RequestMoreOnAggregation) =>
         of(
           new UpdateRequestAggregationTerm(
-            action.key,
+            action.aggregationName,
             {
               increment: action.increment,
             },
@@ -188,7 +181,7 @@ export class SearchEffects {
       switchMap((action) =>
         of(
           new UpdateRequestAggregationTerm(
-            action.key,
+            action.aggregationName,
             {
               include: action.include,
             },
@@ -216,7 +209,7 @@ export class SearchEffects {
               JSON.stringify(
                 this.esService.buildMoreOnAggregationPayload(
                   state.config.aggregations,
-                  action.key,
+                  action.aggregationName,
                   state.params.filters,
                   state.config.filters
                 )
@@ -226,7 +219,7 @@ export class SearchEffects {
           map((response: EsSearchResponse) => {
             const aggregations = response.aggregations
             return new PatchResultsAggregations(
-              action.key,
+              action.aggregationName,
               aggregations,
               action.id
             )

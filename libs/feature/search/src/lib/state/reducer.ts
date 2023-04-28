@@ -1,9 +1,9 @@
 import * as fromActions from './actions'
 import { DEFAULT_SEARCH_KEY } from './actions'
 import {
-  Aggregation,
-  AggregationParams,
-  FieldFilter,
+  Aggregations,
+  AggregationsParams,
+  FieldFilters,
   FieldName,
   SearchParams,
 } from '@geonetwork-ui/common/domain/search'
@@ -24,15 +24,15 @@ export type SearchError = {
 
 export interface SearchStateSearch {
   config: {
-    aggregations?: AggregationParams[]
-    filters?: FieldFilter
-    source?: FieldName[]
+    aggregations: AggregationsParams
+    filters: FieldFilters
+    source: FieldName[]
   }
   params: SearchStateParams
   results: {
     count: number
     records: CatalogRecord[]
-    aggregations: Aggregation[]
+    aggregations: Aggregations
   }
   resultsLayout?: string
   loadingMore: boolean
@@ -44,9 +44,12 @@ export type SearchState = { [key: string]: SearchStateSearch }
 export const initSearch = (): SearchStateSearch => {
   return {
     config: {
+      filters: {},
       source: FIELDS_SUMMARY,
+      aggregations: {},
     },
     params: {
+      filters: {},
       limit: DEFAULT_PAGE_SIZE,
       offset: 0,
       favoritesOnly: false,
@@ -55,7 +58,7 @@ export const initSearch = (): SearchStateSearch => {
     results: {
       count: 0,
       records: [],
-      aggregations: [],
+      aggregations: {},
     },
     loadingMore: false,
     error: null,
@@ -169,12 +172,12 @@ export function reducerSearch(
     case fromActions.SCROLL:
     case fromActions.PAGINATE: {
       const delta = (action as fromActions.Paginate).delta || state.params.limit
-      const from = Math.max(0, state.params.offset + delta)
+      const offset = Math.max(0, state.params.offset + delta)
       return {
         ...state,
         params: {
           ...state.params,
-          from,
+          offset,
         },
       }
     }
@@ -214,7 +217,7 @@ export function reducerSearch(
         ...state,
         results: {
           ...state.results,
-          hits: action.payload,
+          count: action.payload,
         },
       }
     }
@@ -257,7 +260,7 @@ export function reducerSearch(
     case fromActions.UPDATE_REQUEST_AGGREGATION_TERM: {
       const config = state.config
       const aggregations = config.aggregations
-      const terms = aggregations[action.key].terms
+      const terms = aggregations[action.aggregationName].terms
       const { increment, ...patch } = action.patch
 
       if (increment) {
@@ -269,7 +272,7 @@ export function reducerSearch(
           ...config,
           aggregations: {
             ...aggregations,
-            [action.key]: {
+            [action.aggregationName]: {
               terms: {
                 ...terms,
                 ...patch,
@@ -281,7 +284,8 @@ export function reducerSearch(
     }
     case fromActions.PATCH_RESULTS_AGGREGATIONS: {
       const clone = JSON.parse(JSON.stringify(state.results.aggregations))
-      clone[action.key].buckets = action.payload[action.key].buckets
+      clone[action.aggregationName].buckets =
+        action.payload[action.aggregationName].buckets
 
       return {
         ...state,
