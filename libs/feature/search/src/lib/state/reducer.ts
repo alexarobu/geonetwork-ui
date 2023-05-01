@@ -257,41 +257,51 @@ export function reducerSearch(
         },
       }
     }
-    case fromActions.UPDATE_REQUEST_AGGREGATION_TERM: {
+    case fromActions.REQUEST_MORE_ON_AGGREGATION: {
       const config = state.config
-      const aggregations = config.aggregations
-      const terms = aggregations[action.aggregationName].terms
-      const { increment, ...patch } = action.patch
-
-      if (increment) {
-        patch.size = (terms.size || 0) + increment
-      }
+      const aggregation = config.aggregations[action.aggregationName]
+      if (aggregation.type !== 'terms') return state
       return {
         ...state,
         config: {
           ...config,
           aggregations: {
-            ...aggregations,
+            ...config.aggregations,
             [action.aggregationName]: {
-              terms: {
-                ...terms,
-                ...patch,
-              },
+              ...aggregation,
+              limit: aggregation.limit + action.increment,
+            },
+          },
+        },
+      }
+    }
+    case fromActions.SET_INCLUDE_ON_AGGREGATION: {
+      const config = state.config
+      const aggregation = config.aggregations[action.aggregationName]
+      if (aggregation.type !== 'terms') return state
+      return {
+        ...state,
+        config: {
+          ...config,
+          aggregations: {
+            ...config.aggregations,
+            [action.aggregationName]: {
+              ...aggregation,
+              filter: action.include,
             },
           },
         },
       }
     }
     case fromActions.PATCH_RESULTS_AGGREGATIONS: {
-      const clone = JSON.parse(JSON.stringify(state.results.aggregations))
-      clone[action.aggregationName].buckets =
-        action.payload[action.aggregationName].buckets
-
       return {
         ...state,
         results: {
           ...state.results,
-          aggregations: clone,
+          aggregations: {
+            ...state.results.aggregations,
+            [action.aggregationName]: action.payload,
+          },
         },
       }
     }

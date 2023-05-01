@@ -6,7 +6,7 @@ import {
   AggregationsParams,
   FieldFilters,
   FieldName,
-  FieldSort,
+  SortByField,
 } from '@geonetwork-ui/common/domain/search'
 import { CatalogRecord } from '@geonetwork-ui/common/domain/record'
 
@@ -94,7 +94,7 @@ export class SetFavoritesOnly extends AbstractAction implements Action {
 }
 export class SetSortBy extends AbstractAction implements Action {
   readonly type = SET_SORT_BY
-  constructor(public sortBy: FieldSort, id?: string) {
+  constructor(public sortBy: SortByField, id?: string) {
     super(id)
   }
 }
@@ -218,20 +218,6 @@ export class SetIncludeOnAggregation extends AbstractAction implements Action {
   }
 }
 
-export class UpdateRequestAggregationTerm
-  extends AbstractAction
-  implements Action
-{
-  readonly type = UPDATE_REQUEST_AGGREGATION_TERM
-  constructor(
-    public aggregationName: string,
-    public patch: EsRequestAggTermPatch, // TODO: fix this
-    id?: string
-  ) {
-    super(id)
-  }
-}
-
 export class PatchResultsAggregations extends AbstractAction implements Action {
   readonly type = PATCH_RESULTS_AGGREGATIONS
 
@@ -289,7 +275,6 @@ export type SearchActions =
   | SetConfigRequestFields
   | RequestMoreOnAggregation
   | SetIncludeOnAggregation
-  | UpdateRequestAggregationTerm
   | PatchResultsAggregations
   | SetError
   | ClearError

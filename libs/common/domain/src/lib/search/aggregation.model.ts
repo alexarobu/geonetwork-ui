@@ -1,22 +1,26 @@
 import { FieldName } from './search.model'
 import { FieldFilter } from './filter.model'
 
+export interface TermsAggregationParams {
+  type: 'terms'
+  field: FieldName
+  limit: number
+  sort: AggregationSort
+  filter?: string
+}
+export interface HistogramAggregationParams {
+  type: 'histogram'
+  field: FieldName
+  interval: number
+}
+export interface FiltersAggregationParams {
+  type: 'filters'
+  filters: Record<string, FieldFilter>
+}
 export type AggregationParams =
-  | {
-      type: 'terms'
-      field: FieldName
-      limit: number
-      sort: AggregationSort
-    }
-  | {
-      type: 'histogram'
-      field: FieldName
-      interval: number
-    }
-  | {
-      type: 'filters'
-      filters: { name: string; filter: FieldFilter }[]
-    }
+  | TermsAggregationParams
+  | HistogramAggregationParams
+  | FiltersAggregationParams
 export type AggregationsParams = Record<FieldName, AggregationParams>
 
 interface TermBucket {
@@ -37,7 +41,9 @@ export type Bucket = TermBucket | HistogramBucket | FiltersBucket
 
 export type AggregationSort = ['desc' | 'asc', 'key' | 'count']
 
-export interface Aggregation {
+interface AggregationBuckets {
   buckets: Bucket[]
 }
+type AggregationCounts = Record<string, number>
+export type Aggregation = AggregationBuckets | AggregationCounts
 export type Aggregations = Record<FieldName, Aggregation>
