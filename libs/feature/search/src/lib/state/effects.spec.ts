@@ -1,13 +1,13 @@
-import { inject, TestBed } from '@angular/core/testing'
+import { TestBed } from '@angular/core/testing'
 import { AuthService } from '@geonetwork-ui/feature/auth'
 import { SearchApiService } from '@geonetwork-ui/data-access/gn4'
-import { ElasticsearchMapper } from '../utils/mapper'
 import {
   AddResults,
   ClearError,
   ClearPagination,
   ClearResults,
   DEFAULT_SEARCH_KEY,
+  PATCH_RESULTS_AGGREGATIONS,
   PatchResultsAggregations,
   RequestMoreOnAggregation,
   RequestMoreResults,
@@ -27,7 +27,7 @@ import { EffectsModule } from '@ngrx/effects'
 import { provideMockActions } from '@ngrx/effects/testing'
 import { Store, StoreModule } from '@ngrx/store'
 import { getTestScheduler, hot } from 'jasmine-marbles'
-import { Observable, of, throwError } from 'rxjs'
+import { firstValueFrom, Observable, of, throwError } from 'rxjs'
 import { SearchEffects } from './effects'
 import {
   initialState,
@@ -36,7 +36,11 @@ import {
   SearchState,
 } from './reducer'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
-import { AGGREGATIONS_PARAMS } from '@geonetwork-ui/common/fixtures'
+import {
+  SAMPLE_AGGREGATIONS_PARAMS,
+  SAMPLE_AGGREGATIONS_RESULTS,
+  SAMPLE_SEARCH_RESULTS,
+} from '@geonetwork-ui/common/fixtures'
 import { HttpErrorResponse } from '@angular/common/http'
 import { delay } from 'rxjs/operators'
 import { FavoritesService } from '../favorites/favorites.service'
@@ -50,7 +54,7 @@ const stateWithSearches = {
     ...defaultSearchState,
     config: {
       ...defaultSearchState.config,
-      aggregations: AGGREGATIONS_PARAMS,
+      aggregations: SAMPLE_AGGREGATIONS_PARAMS,
     },
   },
   main: {
@@ -71,17 +75,14 @@ class FavoritesServiceMock {
 }
 
 class RecordsRepositoryMock {
-  getSearchRequestBody = jest.fn()
-  buildMoreOnAggregationPayload = jest.fn(() => ({
-    aggregations: {},
-    size: 0,
-    query: {},
-  }))
+  aggregate = jest.fn(() => of(SAMPLE_AGGREGATIONS_RESULTS))
+  search = jest.fn(() => of(SAMPLE_SEARCH_RESULTS))
 }
 
 describe('Effects', () => {
   let effects: SearchEffects
   let actions$: Observable<any>
+  let repository: RecordsRepositoryInterface
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -115,6 +116,7 @@ describe('Effects', () => {
       ],
     })
     effects = TestBed.inject(SearchEffects)
+    repository = TestBed.inject(RecordsRepositoryInterface)
   })
 
   it('should be created', () => {
@@ -214,23 +216,26 @@ describe('Effects', () => {
     })
 
     describe('when running multiple searches concurrently', () => {
-      beforeEach(inject([SearchApiService], (searchService) => {
-        searchService.search = () =>
-          of(simpleWithAgg).pipe(delay(10, getTestScheduler()))
-      }))
+      beforeEach(() => {
+        repository.search = () =>
+          of(SAMPLE_SEARCH_RESULTS).pipe(delay(10, getTestScheduler()))
+      })
       it('cancels requests with the same search id', () => {
         actions$ = hot('-(aabab)-', {
           a: new RequestMoreResults('main'),
           b: new RequestMoreResults(DEFAULT_SEARCH_KEY),
         })
         const expected = hot('--(abcdwxyz)-', {
-          a: new AddResults([], 'main'),
-          b: new SetResultsAggregations({ abc: {} }, 'main'),
-          c: new SetResultsHits(undefined, 'main'),
+          a: new AddResults(SAMPLE_SEARCH_RESULTS.records, 'main'),
+          b: new SetResultsAggregations(SAMPLE_AGGREGATIONS_RESULTS, 'main'),
+          c: new SetResultsHits(123, 'main'),
           d: new ClearError('main'),
-          w: new AddResults([], DEFAULT_SEARCH_KEY),
-          x: new SetResultsAggregations({ abc: {} }, DEFAULT_SEARCH_KEY),
-          y: new SetResultsHits(undefined, DEFAULT_SEARCH_KEY),
+          w: new AddResults(SAMPLE_SEARCH_RESULTS.records, DEFAULT_SEARCH_KEY),
+          x: new SetResultsAggregations(
+            SAMPLE_AGGREGATIONS_RESULTS,
+            DEFAULT_SEARCH_KEY
+          ),
+          y: new SetResultsHits(123, DEFAULT_SEARCH_KEY),
           z: new ClearError(DEFAULT_SEARCH_KEY),
         })
         expect(effects.loadResults$).toBeObservable(expected)
@@ -239,12 +244,12 @@ describe('Effects', () => {
 
     describe('when search fails with HTTP error', () => {
       beforeEach(() => {
-        const searchService = TestBed.inject(SearchApiService)
-        searchService.search = () =>
+        repository.search = () =>
           throwError(
-            new HttpErrorResponse({
-              status: 401,
-            })
+            () =>
+              new HttpErrorResponse({
+                status: 401,
+              })
           )
       })
       it('stores the error', () => {
@@ -267,7 +272,7 @@ describe('Effects', () => {
       beforeEach(() => {
         const searchService = TestBed.inject(SearchApiService)
         searchService.search = () =>
-          throwError(new Error('probably CORS related'))
+          throwError(() => new Error('probably CORS related'))
       })
       it('stores the error with a 0 code and propagates search id', () => {
         actions$ = hot('-a-', { a: new RequestMoreResults('main') })
@@ -279,10 +284,8 @@ describe('Effects', () => {
     })
 
     describe('when asking for favorites only', () => {
-      let esService: ElasticsearchService
       let store: Store<SearchState>
       beforeEach(() => {
-        esService = TestBed.inject(ElasticsearchService)
         store = TestBed.inject(Store)
         store.dispatch(new SetFavoritesOnly(true, 'main'))
       })
@@ -300,8 +303,8 @@ describe('Effects', () => {
       })
       it('filter results within a certain set of ids', async () => {
         actions$ = of(new RequestMoreResults('main'))
-        await readFirst(effects.loadResults$)
-        expect(esService.getSearchRequestBody).toHaveBeenCalledWith(
+        await firstValueFrom(effects.loadResults$)
+        expect(repository.search).toHaveBeenCalledWith(
           expect.anything(), // FIXME: using an object argument would be better here...
           expect.anything(),
           expect.anything(),
@@ -316,13 +319,11 @@ describe('Effects', () => {
     })
 
     describe('when providing a filter geometry', () => {
-      let esService: ElasticsearchService
       beforeEach(() => {
         effects['filterGeometry'] = Promise.resolve({
           type: 'Polygon',
           coordinates: [],
         })
-        esService = TestBed.inject(ElasticsearchService)
       })
       describe('when useSpatialFilter is enabled', () => {
         beforeEach(() => {
@@ -332,8 +333,8 @@ describe('Effects', () => {
         })
         it('passes the geometry to the ES service', async () => {
           actions$ = of(new RequestMoreResults('main'))
-          await readFirst(effects.loadResults$)
-          expect(esService.getSearchRequestBody).toHaveBeenCalledWith(
+          await firstValueFrom(effects.loadResults$)
+          expect(repository.search).toHaveBeenCalledWith(
             expect.anything(),
             expect.anything(),
             expect.anything(),
@@ -354,8 +355,8 @@ describe('Effects', () => {
         })
         it('does not pass the geometry to the ES service', async () => {
           actions$ = of(new RequestMoreResults('main'))
-          await readFirst(effects.loadResults$)
-          expect(esService.getSearchRequestBody).toHaveBeenCalledWith(
+          await firstValueFrom(effects.loadResults$)
+          expect(repository.search).toHaveBeenCalledWith(
             expect.anything(),
             expect.anything(),
             expect.anything(),
@@ -373,18 +374,16 @@ describe('Effects', () => {
 
   describe('when providing a filter geometry that fails to load', () => {
     describe('when providing a filter geometry', () => {
-      let esService: ElasticsearchService
       beforeEach(() => {
         effects['filterGeometry'] = Promise.reject('blarg')
-        esService = TestBed.inject(ElasticsearchService)
         TestBed.inject(Store).dispatch(
           new SetSpatialFilterEnabled(true, 'main')
         )
       })
       it('does not pass the geometry to the ES service', async () => {
         actions$ = of(new RequestMoreResults('main'))
-        await readFirst(effects.loadResults$)
-        expect(esService.getSearchRequestBody).toHaveBeenCalledWith(
+        await firstValueFrom(effects.loadResults$)
+        expect(repository.search).toHaveBeenCalledWith(
           expect.anything(),
           expect.anything(),
           expect.anything(),
@@ -399,41 +398,34 @@ describe('Effects', () => {
     })
   })
 
-  describe('loadMoreOnAggregation$', () => {
-    it('dispatch UPDATE_REQUEST_AGGREGATION_TERM', () => {
-      actions$ = hot('-a-', { a: new RequestMoreOnAggregation('abc', 1) })
-      const expected = hot('-b-', {
-        b: new UpdateRequestAggregationTerm('abc', { increment: 1 }),
-      })
-
-      expect(effects.loadMoreOnAggregation$).toBeObservable(expected)
-    })
-  })
-
-  describe('setIncludeOnAggregation$', () => {
-    it('dispatch UPDATE_REQUEST_AGGREGATION_TERM', () => {
-      actions$ = hot('-a-', { a: new SetIncludeOnAggregation('abc', '*land*') })
-      const expected = hot('-b-', {
-        b: new UpdateRequestAggregationTerm('abc', { include: '*land*' }),
-      })
-
-      expect(effects.setIncludeOnAggregation$).toBeObservable(expected)
-    })
-  })
-
   describe('updateRequestAggregation$', () => {
-    it('patch aggregation results with new aggretation term definition', () => {
-      actions$ = hot('-a-', {
-        a: new UpdateRequestAggregationTerm('abc', {
-          include: '*land*',
-          increment: 1,
-        }),
-      })
-      const expected = hot('-b-', {
-        b: new PatchResultsAggregations('abc', { abc: {} }),
-      })
+    describe('RequestMoreOnAggregation action', () => {
+      it('dispatch PATCH_RESULTS_AGGREGATIONS', () => {
+        actions$ = hot('-a-', { a: new RequestMoreOnAggregation('myField', 1) })
+        const expected = hot('-b-', {
+          b: new PatchResultsAggregations(
+            'myField',
+            SAMPLE_AGGREGATIONS_RESULTS['myField']
+          ),
+        })
 
-      expect(effects.updateRequestAggregation$).toBeObservable(expected)
+        expect(effects.updateRequestAggregation$).toBeObservable(expected)
+      })
+    })
+    describe('SetIncludeOnAggregation action', () => {
+      it('dispatch UPDATE_REQUEST_AGGREGATION_TERM', () => {
+        actions$ = hot('-a-', {
+          a: new SetIncludeOnAggregation('myField', '*land*'),
+        })
+        const expected = hot('-b-', {
+          b: new PatchResultsAggregations(
+            'myField',
+            SAMPLE_AGGREGATIONS_RESULTS['myField']
+          ),
+        })
+
+        expect(effects.updateRequestAggregation$).toBeObservable(expected)
+      })
     })
   })
 })

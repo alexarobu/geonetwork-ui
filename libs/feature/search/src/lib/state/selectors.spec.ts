@@ -2,8 +2,8 @@ import { DEFAULT_SEARCH_KEY } from './actions'
 import { initialState } from './reducer'
 import * as fromSelectors from './selectors'
 import {
-  AGGREGATIONS_PARAMS,
-  AGGREGATIONS_RESULTS,
+  SAMPLE_AGGREGATIONS_PARAMS,
+  SAMPLE_AGGREGATIONS_RESULTS,
 } from '@geonetwork-ui/common/fixtures'
 
 const initialStateSearch = initialState[DEFAULT_SEARCH_KEY]
@@ -45,10 +45,10 @@ describe('Search Selectors', () => {
         ...initialStateSearch,
         config: {
           ...initialStateSearch.config,
-          aggregations: AGGREGATIONS_PARAMS,
+          aggregations: SAMPLE_AGGREGATIONS_PARAMS,
         },
       })
-      expect(result).toEqual(AGGREGATIONS_PARAMS)
+      expect(result).toEqual(SAMPLE_AGGREGATIONS_PARAMS)
     })
   })
 
@@ -166,7 +166,7 @@ describe('Search Selectors', () => {
 
   describe('getSearchResultsAggregations', () => {
     it('should return search aggregations results', () => {
-      const aggregations = AGGREGATIONS_RESULTS
+      const aggregations = SAMPLE_AGGREGATIONS_RESULTS
       const result = fromSelectors.getSearchResultsAggregations.projector({
         ...initialStateSearch,
         results: {

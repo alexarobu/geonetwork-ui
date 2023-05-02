@@ -1,8 +1,8 @@
 import {
-  AGGREGATIONS_PARAMS,
-  AGGREGATIONS_RESULTS,
+  SAMPLE_AGGREGATIONS_PARAMS,
+  SAMPLE_AGGREGATIONS_RESULTS,
   HISTOGRAM_AGGREGATION,
-  SAMPLE_AGGREGATION_RESULTS,
+  SAMPLE_AGGREGATION_MORE_RESULTS,
   TERMS_AGGREGATION,
 } from '@geonetwork-ui/common/fixtures'
 import { DEFAULT_PAGE_SIZE } from '../constants'
@@ -256,7 +256,7 @@ describe('Search Reducer', () => {
 
   describe('SetResultsAggregations action', () => {
     it('should replace the aggregations in the result', () => {
-      const payload = AGGREGATIONS_RESULTS
+      const payload = SAMPLE_AGGREGATIONS_RESULTS
       const action = new fromActions.SetResultsAggregations(payload)
       const state = reducerSearch(
         {
@@ -268,13 +268,13 @@ describe('Search Reducer', () => {
         },
         action
       )
-      expect(state.results.aggregations).toEqual(AGGREGATIONS_RESULTS)
+      expect(state.results.aggregations).toEqual(SAMPLE_AGGREGATIONS_RESULTS)
     })
   })
 
   describe('SetConfigAggregations action', () => {
     it('should replace the aggregations in the config', () => {
-      const payload = AGGREGATIONS_PARAMS
+      const payload = SAMPLE_AGGREGATIONS_PARAMS
       const action = new fromActions.SetConfigAggregations(payload)
       const state = reducerSearch(
         {
@@ -293,7 +293,7 @@ describe('Search Reducer', () => {
         },
         action
       )
-      expect(state.config.aggregations).toEqual(AGGREGATIONS_PARAMS)
+      expect(state.config.aggregations).toEqual(SAMPLE_AGGREGATIONS_PARAMS)
     })
   })
 
@@ -339,7 +339,7 @@ describe('Search Reducer', () => {
           ...initialStateSearch,
           config: {
             ...initialStateSearch.config,
-            aggregations: AGGREGATIONS_PARAMS,
+            aggregations: SAMPLE_AGGREGATIONS_PARAMS,
           },
         },
         action
@@ -358,7 +358,7 @@ describe('Search Reducer', () => {
         ...initialStateSearch,
         config: {
           ...initialStateSearch.config,
-          aggregations: AGGREGATIONS_PARAMS,
+          aggregations: SAMPLE_AGGREGATIONS_PARAMS,
         },
       }
       const state = reducerSearch(initialState, action)
@@ -377,7 +377,7 @@ describe('Search Reducer', () => {
           ...initialStateSearch,
           config: {
             ...initialStateSearch.config,
-            aggregations: AGGREGATIONS_PARAMS,
+            aggregations: SAMPLE_AGGREGATIONS_PARAMS,
           },
         },
         action
@@ -396,7 +396,7 @@ describe('Search Reducer', () => {
         ...initialStateSearch,
         config: {
           ...initialStateSearch.config,
-          aggregations: AGGREGATIONS_PARAMS,
+          aggregations: SAMPLE_AGGREGATIONS_PARAMS,
         },
       }
       const state = reducerSearch(initialState, action)
@@ -408,20 +408,20 @@ describe('Search Reducer', () => {
     it('should replace the aggregations buckets for the key in the result', () => {
       const action = new fromActions.PatchResultsAggregations(
         'myField',
-        SAMPLE_AGGREGATION_RESULTS
+        SAMPLE_AGGREGATION_MORE_RESULTS
       )
       const state = reducerSearch(
         {
           ...initialStateSearch,
           results: {
             ...initialStateSearch.results,
-            aggregations: AGGREGATIONS_RESULTS,
+            aggregations: SAMPLE_AGGREGATIONS_RESULTS,
           },
         },
         action
       )
       expect(state.results.aggregations['myField']).toEqual(
-        SAMPLE_AGGREGATION_RESULTS
+        SAMPLE_AGGREGATION_MORE_RESULTS
       )
     })
   })
