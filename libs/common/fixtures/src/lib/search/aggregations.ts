@@ -28,13 +28,13 @@ export const FILTERS_AGGREGATION: AggregationParams = {
     },
   },
 }
-export const AGGREGATIONS_PARAMS: AggregationsParams = deepFreeze({
+export const SAMPLE_AGGREGATIONS_PARAMS: AggregationsParams = deepFreeze({
   myField: TERMS_AGGREGATION,
   myValueField: HISTOGRAM_AGGREGATION,
   myFilters: FILTERS_AGGREGATION,
 })
 
-export const AGGREGATIONS_RESULTS: Aggregations = deepFreeze({
+export const SAMPLE_AGGREGATIONS_RESULTS: Aggregations = deepFreeze({
   myField: {
     buckets: [
       { term: 'Hungary', count: 20 },
@@ -60,7 +60,7 @@ export const AGGREGATIONS_RESULTS: Aggregations = deepFreeze({
     secondValueOnly: 45,
   },
 })
-export const SAMPLE_AGGREGATION_RESULTS = {
+export const SAMPLE_AGGREGATION_MORE_RESULTS = {
   buckets: [
     { term: 'Spain', count: 86 },
     { term: 'United Kingdom', count: 84 },
