@@ -1,6 +1,5 @@
 import { Inject, Injectable, Optional } from '@angular/core'
 import { AuthService } from '@geonetwork-ui/feature/auth'
-import { EsSearchResponse } from '@geonetwork-ui/util/shared'
 import { Actions, createEffect, ofType } from '@ngrx/effects'
 import { select, Store } from '@ngrx/store'
 import { combineLatestWith, from, of } from 'rxjs'
@@ -34,8 +33,6 @@ import {
   SetResultsAggregations,
   SetResultsHits,
   UPDATE_FILTERS,
-  UPDATE_REQUEST_AGGREGATION_TERM,
-  UpdateRequestAggregationTerm,
 } from './actions'
 import { SearchState, SearchStateSearch } from './reducer'
 import { getSearchStateSearch } from './selectors'
@@ -44,14 +41,14 @@ import { switchMapWithSearchId } from '../utils/operators/search.operator'
 import { FavoritesService } from '../favorites/favorites.service'
 import { Geometry } from 'geojson'
 import { FILTER_GEOMETRY } from '../feature-search.module'
-import { Gn4Repository } from '@geonetwork-ui/api/repository/gn4'
+import { RecordsRepositoryInterface } from '@geonetwork-ui/common/domain/records-repository.interface'
 
 @Injectable()
 export class SearchEffects {
   constructor(
     private actions$: Actions,
     private store$: Store<SearchState>,
-    private recordsRepository: Gn4Repository,
+    private recordsRepository: RecordsRepositoryInterface,
     private authService: AuthService,
     private favoritesService: FavoritesService,
     @Optional()
@@ -158,69 +155,27 @@ export class SearchEffects {
     )
   )
 
-  loadMoreOnAggregation$ = createEffect(() => {
+  updateRequestAggregation$ = createEffect(() => {
     return this.actions$.pipe(
-      ofType<RequestMoreOnAggregation>(REQUEST_MORE_ON_AGGREGATION),
-      switchMap((action: RequestMoreOnAggregation) =>
-        of(
-          new UpdateRequestAggregationTerm(
-            action.aggregationName,
-            {
-              increment: action.increment,
-            },
-            action.id
-          )
-        )
-      )
-    )
-  })
-
-  setIncludeOnAggregation$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType<SetIncludeOnAggregation>(SET_INCLUDE_ON_AGGREGATION),
-      switchMap((action) =>
-        of(
-          new UpdateRequestAggregationTerm(
-            action.aggregationName,
-            {
-              include: action.include,
-            },
-            action.id
-          )
-        )
-      )
-    )
-  })
-
-  updateRequestAggregationTerm$ = createEffect(() => {
-    const updateTermAction$ = this.actions$.pipe(
-      ofType<UpdateRequestAggregationTerm>(UPDATE_REQUEST_AGGREGATION_TERM)
-    )
-
-    return updateTermAction$.pipe(
+      ofType<SetIncludeOnAggregation | RequestMoreOnAggregation>(
+        SET_INCLUDE_ON_AGGREGATION,
+        REQUEST_MORE_ON_AGGREGATION
+      ),
       switchMap((action) =>
         this.authService.authReady().pipe(
           withLatestFrom(
             this.store$.pipe(select(getSearchStateSearch, action.id))
           ),
           switchMap(([, state]) =>
-            this.searchService.search(
-              'bucket',
-              JSON.stringify(
-                this.esService.buildMoreOnAggregationPayload(
-                  state.config.aggregations,
-                  action.aggregationName,
-                  state.params.filters,
-                  state.config.filters
-                )
-              )
-            )
+            this.recordsRepository.aggregate({
+              [action.aggregationName]:
+                state.config.aggregations[action.aggregationName],
+            })
           ),
-          map((response: EsSearchResponse) => {
-            const aggregations = response.aggregations
+          map((aggregations) => {
             return new PatchResultsAggregations(
               action.aggregationName,
-              aggregations,
+              aggregations[action.aggregationName],
               action.id
             )
           })

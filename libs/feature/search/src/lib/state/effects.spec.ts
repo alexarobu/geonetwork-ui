@@ -22,7 +22,6 @@ import {
   SetSortBy,
   SetSpatialFilterEnabled,
   UpdateFilters,
-  UpdateRequestAggregationTerm,
 } from './actions'
 import { EffectsModule } from '@ngrx/effects'
 import { provideMockActions } from '@ngrx/effects/testing'
@@ -37,16 +36,12 @@ import {
   SearchState,
 } from './reducer'
 import { HttpClientTestingModule } from '@angular/common/http/testing'
-import {
-  ES_FIXTURE_AGGS_REQUEST,
-  simpleWithAgg,
-} from '@geonetwork-ui/common/fixtures'
+import { AGGREGATIONS_PARAMS } from '@geonetwork-ui/common/fixtures'
 import { HttpErrorResponse } from '@angular/common/http'
 import { delay } from 'rxjs/operators'
 import { FavoritesService } from '../favorites/favorites.service'
-import { readFirst } from '@nrwl/angular/testing'
-import { ElasticsearchService } from '@geonetwork-ui/util/shared'
 import { FILTER_GEOMETRY } from '../feature-search.module'
+import { RecordsRepositoryInterface } from '@geonetwork-ui/common/domain/records-repository.interface'
 
 const defaultSearchState = initialState[DEFAULT_SEARCH_KEY]
 const stateWithSearches = {
@@ -55,7 +50,7 @@ const stateWithSearches = {
     ...defaultSearchState,
     config: {
       ...defaultSearchState.config,
-      aggregations: ES_FIXTURE_AGGS_REQUEST,
+      aggregations: AGGREGATIONS_PARAMS,
     },
   },
   main: {
@@ -67,23 +62,15 @@ const stateWithSearches = {
   },
 }
 
-class SearchServiceMock {
-  configuration = {
-    basePath: 'http://geonetwork/srv/api',
-  }
-  search = () => of(simpleWithAgg)
-}
 class AuthServiceMock {
   authReady = () => of(true)
 }
-class EsMapperMock {
-  toRecords = () => []
-}
+
 class FavoritesServiceMock {
   myFavoritesUuid$ = of(['fav001', 'fav002', 'fav003'])
 }
 
-class EsServiceMock {
+class RecordsRepositoryMock {
   getSearchRequestBody = jest.fn()
   buildMoreOnAggregationPayload = jest.fn(() => ({
     aggregations: {},
@@ -110,24 +97,16 @@ describe('Effects', () => {
         provideMockActions(() => actions$),
         SearchEffects,
         {
-          provide: SearchApiService,
-          useClass: SearchServiceMock,
-        },
-        {
           provide: AuthService,
           useClass: AuthServiceMock,
-        },
-        {
-          provide: ElasticsearchMapper,
-          useClass: EsMapperMock,
         },
         {
           provide: FavoritesService,
           useClass: FavoritesServiceMock,
         },
         {
-          provide: ElasticsearchService,
-          useClass: EsServiceMock,
+          provide: RecordsRepositoryInterface,
+          useClass: RecordsRepositoryMock,
         },
         {
           provide: FILTER_GEOMETRY,
@@ -144,7 +123,7 @@ describe('Effects', () => {
 
   describe('clearResults$', () => {
     it('clear results list on sortBy action', () => {
-      actions$ = hot('-a---', { a: new SetSortBy('fieldA') })
+      actions$ = hot('-a---', { a: new SetSortBy(['asc', 'fieldA']) })
       const expected = hot('-(bcd)', {
         b: new ClearResults(),
         c: new ClearPagination(),
@@ -442,7 +421,7 @@ describe('Effects', () => {
     })
   })
 
-  describe('upateRequestAggregationTerm$', () => {
+  describe('updateRequestAggregation$', () => {
     it('patch aggregation results with new aggretation term definition', () => {
       actions$ = hot('-a-', {
         a: new UpdateRequestAggregationTerm('abc', {
@@ -454,7 +433,7 @@ describe('Effects', () => {
         b: new PatchResultsAggregations('abc', { abc: {} }),
       })
 
-      expect(effects.updateRequestAggregationTerm$).toBeObservable(expected)
+      expect(effects.updateRequestAggregation$).toBeObservable(expected)
     })
   })
 })

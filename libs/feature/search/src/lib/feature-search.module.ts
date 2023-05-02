@@ -23,6 +23,8 @@ import { MatIconModule } from '@angular/material/icon'
 import { FilterDropdownComponent } from './filter-dropdown/filter-dropdown.component'
 import { Geometry } from 'geojson'
 import { UiWidgetsModule } from '@geonetwork-ui/ui/widgets'
+import { RecordsRepositoryInterface } from '@geonetwork-ui/common/domain/records-repository.interface'
+import { Gn4Repository } from '@geonetwork-ui/api/repository/gn4'
 
 // this geometry will be used to filter & boost results accordingly
 export const FILTER_GEOMETRY = new InjectionToken<Promise<Geometry>>(
@@ -69,6 +71,12 @@ export const FILTER_GEOMETRY = new InjectionToken<Promise<Geometry>>(
     SearchStateContainerDirective,
     FavoriteStarComponent,
     FilterDropdownComponent,
+  ],
+  providers: [
+    {
+      provide: RecordsRepositoryInterface,
+      useClass: Gn4Repository,
+    },
   ],
 })
 export class FeatureSearchModule {}

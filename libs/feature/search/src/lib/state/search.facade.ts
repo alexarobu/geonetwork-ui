@@ -1,9 +1,4 @@
 import { Inject, Injectable, Optional } from '@angular/core'
-import {
-  RequestFields,
-  SearchFilters,
-  StateConfigFilters,
-} from '@geonetwork-ui/util/shared'
 import { select, Store } from '@ngrx/store'
 import { from, Observable, of } from 'rxjs'
 import {
@@ -49,18 +44,23 @@ import {
 import { FILTER_GEOMETRY } from '../feature-search.module'
 import { Geometry } from 'geojson'
 import { catchError, map, shareReplay } from 'rxjs/operators'
+import {
+  FieldFilters,
+  FieldName,
+  SortByField,
+} from '@geonetwork-ui/common/domain/search'
 
 @Injectable()
 export class SearchFacade {
   results$: Observable<any>
   layout$: Observable<string>
-  sortBy$: Observable<string>
+  sortBy$: Observable<SortByField>
   isLoading$: Observable<boolean>
   isEndOfResults$: Observable<boolean>
   totalPages$: Observable<number>
   currentPage$: Observable<number>
   size$: Observable<number>
-  searchFilters$: Observable<SearchFilters>
+  searchFilters$: Observable<FieldFilters>
   configAggregations$: Observable<any>
   resultsAggregations$: Observable<any>
   resultsHits$: Observable<any>
@@ -129,12 +129,12 @@ export class SearchFacade {
     return this
   }
 
-  setConfigRequestFields(fields: RequestFields): SearchFacade {
+  setConfigRequestFields(fields: FieldName[]): SearchFacade {
     this.store.dispatch(new SetConfigRequestFields(fields, this.searchId))
     return this
   }
 
-  setConfigFilters(filters: StateConfigFilters): SearchFacade {
+  setConfigFilters(filters: FieldFilters): SearchFacade {
     this.store.dispatch(new SetConfigFilters(filters, this.searchId))
     return this
   }
@@ -156,12 +156,12 @@ export class SearchFacade {
     return this
   }
 
-  setFilters(filters: SearchFilters): SearchFacade {
+  setFilters(filters: FieldFilters): SearchFacade {
     this.store.dispatch(new SetFilters(filters, this.searchId))
     return this
   }
 
-  updateFilters(filters: SearchFilters): SearchFacade {
+  updateFilters(filters: FieldFilters): SearchFacade {
     this.store.dispatch(new UpdateFilters(filters, this.searchId))
     return this
   }
@@ -198,7 +198,7 @@ export class SearchFacade {
     return this
   }
 
-  setSortBy(sortBy: string) {
+  setSortBy(sortBy: SortByField) {
     this.store.dispatch(new SetSortBy(sortBy, this.searchId))
     return this
   }
