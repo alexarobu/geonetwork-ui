@@ -1,7 +1,3 @@
-<gn-ui-dropdown-selector
-  [title]="'search.field.sortBy' | translate"
-  [choices]="choices"
-  (selectValue)="changeSortBy($event)"
-  [selected]="currentSortBy$ | async"
-  ariaName="search-sort-by"
-></gn-ui-dropdown-selector>
+<gn-ui-dropdown-selector [title]="'search.field.sortBy' | translate" [choices]="choices"
+  (selectValue)="changeSortBy($event)" [selected]="currentSortBy$ | async"
+  ariaName="search-sort-by"></gn-ui-dropdown-selector>

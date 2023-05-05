@@ -17,7 +17,7 @@ export class OrganisationsComponent {
   constructor(
     private organisationsService: OrganisationsService,
     private searchService: SearchService
-  ) {}
+  ) { }
   totalPages: number
   currentPage$ = new BehaviorSubject(1)
   sortBy$ = new BehaviorSubject('name-asc')

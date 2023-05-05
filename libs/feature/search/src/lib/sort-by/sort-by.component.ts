@@ -7,6 +7,7 @@ import { SearchService } from '../utils/service/search.service'
 marker('results.sortBy.relevancy')
 marker('results.sortBy.dateStamp')
 marker('results.sortBy.popularity')
+marker('results.sortBy.title')
 
 @Component({
   selector: 'gn-ui-sort-by',
@@ -32,7 +33,7 @@ export class SortByComponent {
   constructor(
     private facade: SearchFacade,
     private searchService: SearchService
-  ) {}
+  ) { }
 
   changeSortBy(criteria: any) {
     if (typeof criteria === 'string') {

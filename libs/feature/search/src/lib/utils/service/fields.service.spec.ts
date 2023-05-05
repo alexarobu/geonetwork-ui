@@ -60,6 +60,8 @@ describe('FieldsService', () => {
         'isSpatial',
         'q',
         'license',
+        'documentStandard',
+        'inspireKeyword',
       ])
     })
   })
