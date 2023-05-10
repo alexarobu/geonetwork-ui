@@ -15,22 +15,42 @@ import {
 })
 export class FieldsService {
   private fields = {
-    publisher: new SimpleSearchField('OrgForResourceObject.default', 'asc', this.injector),
+    publisher: new SimpleSearchField(
+      'OrgForResourceObject.default',
+      'asc',
+      this.injector
+    ),
     format: new SimpleSearchField('format', 'asc', this.injector),
-    publicationYear: new SimpleSearchField('publicationYearForResource', 'desc', this.injector),
+    publicationYear: new SimpleSearchField(
+      'publicationYearForResource',
+      'desc',
+      this.injector
+    ),
     topic: new SimpleSearchField('cl_topic.default', 'asc', this.injector),
-    inspireKeyword: new SimpleSearchField('th_httpinspireeceuropaeutheme-theme_tree.default', 'asc', this.injector),
-    documentStandard: new SimpleSearchField('documentStandard', 'asc', this.injector),
+    inspireKeyword: new SimpleSearchField(
+      'th_httpinspireeceuropaeutheme-theme_tree.default',
+      'asc',
+      this.injector
+    ),
+    documentStandard: new SimpleSearchField(
+      'documentStandard',
+      'asc',
+      this.injector
+    ),
     isSpatial: new IsSpatialSearchField(this.injector),
     q: new FullTextSearchField(),
-    license: new SimpleSearchField('licenseObject.default.keyword', 'asc', this.injector),
+    license: new SimpleSearchField(
+      'licenseObject.default.keyword',
+      'asc',
+      this.injector
+    ),
   } as Record<string, AbstractSearchField>
 
   get supportedFields() {
     return Object.keys(this.fields)
   }
 
-  constructor(private injector: Injector) { }
+  constructor(private injector: Injector) {}
 
   private getField(fieldName: string) {
     if (this.supportedFields.indexOf(fieldName) === -1)
