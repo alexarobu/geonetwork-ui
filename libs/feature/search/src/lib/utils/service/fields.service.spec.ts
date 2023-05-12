@@ -84,7 +84,7 @@ describe('FieldsService', () => {
     })
     it('converts to filters', () => {
       expect(service.getFiltersForValues('publisher', ['aa', 'bb'])).toEqual({
-        OrgForResource: {
+        'OrgForResourceObject.default': {
           aa: true,
           bb: true,
         },
@@ -103,7 +103,7 @@ describe('FieldsService', () => {
     it('calls the search api', () => {
       expect(
         service.getValuesForFilters('publisher', {
-          OrgForResource: {
+          'OrgForResourceObject.default': {
             aa: true,
             bb: true,
           },
