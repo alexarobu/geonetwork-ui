@@ -76,7 +76,7 @@ export class OrganisationsComponent {
 
   searchByOrganisation(organisation: Organisation) {
     this.searchService.setFilters({
-      OrgForResource: { [organisation.name]: true },
+      OrgForResourceObject: { [organisation.name]: true },
     })
   }
 

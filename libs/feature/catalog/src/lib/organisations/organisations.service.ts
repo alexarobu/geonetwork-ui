@@ -95,7 +95,7 @@ export class OrganisationsService {
               aggs: {
                 org: {
                   terms: {
-                    field: 'contactForResource.organisation',
+                    field: 'contactForResource.organisationObject.default.keyword',
                     exclude: '',
                     size: 5000,
                     order: { _key: 'asc' },
